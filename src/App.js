@@ -1,23 +1,52 @@
 import logo from './logo.svg';
 import './App.css';
+import React from 'react';
+
+// Class Component -> OOP
+// Function Component -> Hooks 
+
+// Component = Element (tag)
+// Hooks = hàm (có sẵn)
+
+// Naming Convention => Pascal Case
+
+class Paragraph extends React.Component{
+  render(){
+    return (
+      // JSX
+      <p className='fst-italic'>
+        <i className='fa fa-times me-2 text-warning' />
+        Consequat excepteur tempor ut elit laborum est consequat excepteur sit consequat deserunt. Ex ex anim nisi qui proident sit irure. Nostrud aliquip ex laboris mollit officia. Id irure laboris qui ea enim cupidatat fugiat eu velit sunt ipsum.
+      </p>
+    )
+  }
+}
+
+function Heading(){
+  // logic
+
+  // JSX
+  return (
+    <>
+      <h1 className='text-danger'>Ut fugiat ex eu incididunt sunt occaecat adipisicing nisi fugiat eu commodo officia cupidatat.</h1>
+      <Paragraph/>
+    </>
+  )
+}
+
+function TextField(){
+  return(
+    <input className='form-control' />
+  )
+}
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <TextField/>
+      <Heading/>
+      <Paragraph/>
     </div>
   );
 }
