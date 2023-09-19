@@ -2,22 +2,25 @@ import React, { useState, useEffect } from "react";
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
-const registerSchema = yup.object({
+
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+const studentSchema = yup.object({
     name: yup.string()
         .required("Name là bắt buộc")
         .min(5, "Tên phải từ 5 ký tự!"),
-    city: yup.string()
-        .required("City là bắt buộc"),
+    city: yup.string().required("City là bắt buộc"),
     gender: yup.string().required(),
     mark: yup.number()
-        .required()
+        .required("Mark bắt buộc phải nhập")
         .min(0, "Mark phải lớn hơn hoặc 0")
         .max(10, "Mark phải nhỏ hơn hoặc bằng 10")
-        .typeError("Không hợp lệ"),
+        .typeError("Không hợp lệ")
+    ,
     age: yup.number()
         .required()
         .positive()
-        .max(40)
+        .max(25, "Age phải nhỏ hơn 25")
         .typeError("Không hợp lệ")
 })
 const Content = () => {
@@ -26,15 +29,16 @@ const Content = () => {
     const [totalPage, setTotalPage] = useState(0)
     const [action, setAction] = useState('next')
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
-        resolver: yupResolver(registerSchema)
+        resolver: yupResolver(studentSchema)
     })
 
     const handleCreate = (data) => {
         console.log(data);
         postData("https://js-post-api.herokuapp.com/api/students", data)
+        setShow(false);
+        reset()
     }
     async function postData(url, data) {
-        // Default options are marked with *
         const response = await fetch(url, {
             method: "POST",
             headers: {
@@ -86,9 +90,24 @@ const Content = () => {
 
     // }
 
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => {
+        //clearErrors();
+        reset()
+        setShow(false);
+    }
+    const handleShow = () => setShow(true);
+
+
+
     return (
         <div className="container-fluid">
             <h1>List Student</h1>
+            <Button variant="primary" onClick={handleShow}>
+                <i className="fa fa-plus"></i>
+                Add
+            </Button>
             <table className="table table-bordered">
                 <thead className="table-success">
                     <tr>
@@ -125,8 +144,6 @@ const Content = () => {
                 </tbody>
             </table >
 
-
-
             <nav aria-label="Page navigation example">
                 <ul className="pagination justify-content-center">
                     <li className={`${currentPage === 1 ? 'page-item disabled' : 'page-item '} ${action === 'first' ? 'active' : ''}`}>
@@ -150,11 +167,12 @@ const Content = () => {
                     </li>
                 </ul>
             </nav>
-
-            <div className="container d-flex justify-content-center" style={{ backgroundColor: "lightblue" }}>
-                <div className="row col-md-6">
-                    <h1 className="text-center mt-5">Form create</h1>
-                    <form onSubmit={handleSubmit(handleCreate)}>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Modal create</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <form onSubmit={handleSubmit(handleCreate)} className="mx-3">
                         <div className="form-group mb-3">
                             <label className="lable-form">Name</label>
                             <input type="text" className="form-control" {...register('name')} />
@@ -182,16 +200,25 @@ const Content = () => {
                         </div>
                         <div className="form-group mb-3">
                             <label className="lable-form">Mark</label>
-                            <input type="number" className="form-control" {...register('mark')} />
+                            <input type="text" className="form-control" {...register('mark')} />
                             <span className="text-danger">{errors?.mark?.message}</span>
                         </div>
-                        <div className="form-group mb-3">
+                        {/* <div className="form-group mb-3">
                             <button type="submit" className="btn btn-primary me-3">Save</button>
                             <button type="button" className="btn btn-danger" onClick={() => reset()}>Cancel</button>
-                        </div>
+                        </div> */}
+                        <Modal.Footer>
+                            <Button variant="secondary" type="button" onClick={handleClose}>
+                                Close
+                            </Button>
+                            <Button variant="primary" type="submit">
+                                Save Changes
+                            </Button>
+                        </Modal.Footer>
                     </form>
-                </div>
-            </div>
+                </Modal.Body>
+
+            </Modal>
 
         </div >
     )
